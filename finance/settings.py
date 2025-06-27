@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'transactions',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -126,4 +127,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = "/accounts/login/"
+LOGIN_URL = 'transactions:login'
+LOGIN_REDIRECT_URL = 'transactions:list'
+LOGOUT_REDIRECT_URL = 'transactions:login'

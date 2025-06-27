@@ -1,12 +1,17 @@
 {% extends "registration/base.html" %}
 
 {% block content %}
-    <h1>Welcome, {{ user.username }}!</h1>
+<h1>Welcome, {{ user.username }}!</h1>
 
-    <div class="mt-4">
-        <h2>Your actions:</h2>
-        <ul>
-            <li><a href="{% url 'logout' %}">Log out</a></li>
-        </ul>
-    </div>
+<div class="mt-4">
+    <h2>Your actions:</h2>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a href="{% url 'transactions:list' %}">View Transactions</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'transactions:logout' %}">Log out</a>
+        </li>
+    </ul>
+</div>
 {% endblock %}
