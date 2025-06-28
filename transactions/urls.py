@@ -2,6 +2,7 @@ from django.urls import path, include
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
 
+
 app_name = 'transactions'
 
 urlpatterns = [
@@ -11,4 +12,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('transactions/', views.TransactionListView.as_view(), name='list'),
     path('transactions/add/', views.CreateTransactionView.as_view(), name='create'),
+    path('statistics/', views.statistics_view, name='statistics'),
+    path('transactions/<int:pk>/', views.TransactionDetailView.as_view(), name='transaction_detail'),
+    path('categories/<int:pk>/', views.CategoryDetailView.as_view(), name='category_detail'),
 ]

@@ -3,17 +3,52 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Add Transaction</h2>
-    <form method="post">
+    <form method="post" novalidate>
         {% csrf_token %}
 
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Поле type -->
+        <div class="mb-3">
+            <label class="form-label">Transaction Type</label>
+            {% for choice in form.type %}
+            <div class="form-check">
+                {{ choice.tag }}
+                <label class="form-check-label" for="{{ choice.id_for_label }}">
+                    {{ choice.choice_label }}
+                </label>
+            </div>
+            {% endfor %}
+            {% if form.type.errors %}
+            <div class="text-danger">
+                {% for error in form.type.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Остальные поля формы -->
         <div class="mb-3">
             {{ form.amount.label_tag }}
             {{ form.amount }}
+            {% if form.amount.errors %}
+            <div class="text-danger">
+                {% for error in form.amount.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
             {{ form.date.label_tag }}
             {{ form.date }}
+            {% if form.date.errors %}
+            <div class="text-danger">
+                {% for error in form.date.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -23,6 +58,11 @@
                 {{ form.new_category }}
                 <small class="text-muted">Leave empty if selecting existing category</small>
             </div>
+            {% if form.category.errors %}
+            <div class="text-danger">
+                {% for error in form.category.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">

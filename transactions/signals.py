@@ -10,4 +10,5 @@ def create_default_categories(sender, instance, created, **kwargs):
         default_categories = ['Food', 'Transport',
                               'Utilities', 'Entertainment']
         for cat_name in default_categories:
-            Category.objects.create(name=cat_name, user=instance)
+            if not Category.objects.filter(user=instance, name=cat_name).exists():
+                Category.objects.create(name=cat_name, user=instance)

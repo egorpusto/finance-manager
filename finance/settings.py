@@ -130,3 +130,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'transactions:login'
 LOGIN_REDIRECT_URL = 'transactions:list'
 LOGOUT_REDIRECT_URL = 'transactions:login'
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
