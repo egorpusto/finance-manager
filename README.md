@@ -1,58 +1,82 @@
 # Finance Manager
 
 ## 📝 Description
-A Django-based personal finance management application that helps users track income and expenses. The app features transaction categorization, financial statistics, and user-friendly dashboards.
+Django-powered personal finance tracker with income/expense management, visual statistics, and secure user authentication. Perfect for personal budgeting and financial analysis.
 
 ## ✨ Features
 
-- **Transaction Management**: Record financial transactions with amount, date and category
-- **Categories System**: Customizable categories for better expense tracking
-- **User Authentication**: Secure registration and login system
-- **Dashboard**: Overview of financial activities
-- **Admin Panel**: Full control over transactions and categories
-- **PostgreSQL Support**: Ready for production deployments
+### 💰 Transactions
+- Income/Expense tracking with categories
+- CSV export functionality
+- Transaction filtering by date/type
+- Bulk operations (admin panel)
 
-## 🛠 Technologies
+### 📊 Analytics
+- Interactive monthly charts (Chart.js)
+- Income vs. expense comparison
+- Category spending breakdown
+- REST API endpoints
 
-- Python 3.x
-- Django 5.x
+### 🔒 Security
+- Password-protected accounts
+- CSRF protection
+- Session authentication
+- Role-based access control
+
+## 🛠 Tech Stack
+
+**Backend:**
+- Python 3.10+
+- Django 5.0
+- Django REST Framework
 - PostgreSQL (production)
 - SQLite (development)
-- Bootstrap 5 (UI)
-- HTML/CSS
 
-## 🚀 Getting Started
+**Frontend:**
+- Bootstrap 5
+- Chart.js
+- HTML5/CSS3
+- Responsive design
 
-### 1. Clone the project
+## 🚀 Quick Start
 
+### 1. Clone repo
 git clone https://github.com/egorpusto/finance-manager.git
 cd finance-manager
 
-### 2. Create and activate a virtual environment
-
+### 2. Setup environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
 ### 3. Install dependencies
-
 pip install -r requirements.txt
 
-### 4. Run migrations
+### 4. Configure .env
+cp .env.example .env
+nano .env  # Edit your settings
 
+### 5. Run migrations
 python manage.py migrate
 
-### 5. Create a superuser (for admin panel)
-
+### 6. Create admin
 python manage.py createsuperuser
 
-### 6. Start the development server
-
+### 7. Start dev server
 python manage.py runserver
 
 Visit:
 
-- http://127.0.0.1:8000/ - Main interface
-- http://127.0.0.1:8000/admin/ - Admin panel
+Access:
+
+- App: http://localhost:8000 - App
+- Admin: http://localhost:8000/admin - Admin panel
+- http://localhost:8000/api - API
+
+## 🧪 Testing
+
+Run tests with:
+
+python manage.py test
 
 ## 🗂 Project Structure
 
@@ -60,16 +84,32 @@ Visit:
   - `transactions/` — Main app
     - `migrations/` — Database migrations
     - `templates/` — HTML templates
+    - `__init__.py`
+    - `admin.py` - Admin config
+    - `apps.py`
     - `forms.py` — Transaction forms
     - `models.py` — Data models
+    - `signals.py` - Post-save hooks
+    - `tests.py` - Unit tests
     - `urls.py` — App URLs
     - `views.py` — View logic
   - `finance/` — Project config
+    - `__init__.py`
+    - `asgi.py`
     - `settings.py` — Django settings
     - `urls.py` — Project URLs
-    - `wsgi.py` — WSGI config
+    - `wsgi.py`
+  - `.env.example` - Env template
   - `manage.py` — Management script
   - `requirements.txt` — Dependencies
+
+## ⚙️ Configuration
+
+### Create .env file with:
+
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+DATABASE_URL=sqlite:///db.sqlite3  # Or your PostgreSQL URL
 
 ---
 
