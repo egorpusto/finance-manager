@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from .models import Transaction
+from .models import Transaction, Category
 
 
 class TransactionTests(TestCase):
@@ -18,6 +18,7 @@ class TransactionTests(TestCase):
         transaction = Transaction.objects.create(
             user=self.user,
             amount=1000,
-            category=self.category
+            category=self.category,
+            type=Transaction.EXPENSE 
         )
         self.assertEqual(str(transaction), f"{transaction.date} - 1000")
