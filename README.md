@@ -66,10 +66,8 @@ python manage.py runserver
 
 Visit:
 
-Access:
-
-- App: http://localhost:8000 - App
-- Admin: http://localhost:8000/admin - Admin panel
+- http://localhost:8000 - App
+- http://localhost:8000/admin - Admin panel
 - http://localhost:8000/api - API
 
 ## 🧪 Testing
