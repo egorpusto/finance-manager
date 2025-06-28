@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from .managers import BudgetLimitManager, TransactionManager
 
 
 class Category(models.Model):
@@ -14,7 +15,6 @@ class Category(models.Model):
             models.UniqueConstraint(
                 fields=['user', 'name'], name='unique_user_category')
         ]
-        unique_together = ('name', 'user')
         verbose_name = "Transaction Category"
         verbose_name_plural = "Transaction Categories"
         ordering = ['name']
@@ -24,7 +24,7 @@ class Category(models.Model):
 
     def get_absolute_url(self):
         return reverse('transactions:category_detail', kwargs={'pk': self.pk})
-
+    
 
 class Transaction(models.Model):
     INCOME = 'income'
@@ -37,7 +37,8 @@ class Transaction(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name="User"
+        verbose_name="User",
+        null=False
     )
     amount = models.DecimalField(
         max_digits=10,
@@ -63,6 +64,8 @@ class Transaction(models.Model):
         verbose_name="Description"
     )
 
+    objects = TransactionManager()
+
     class Meta:
         verbose_name = "Financial Transaction"
         verbose_name_plural = "Financial Transactions"
@@ -76,3 +79,40 @@ class Transaction(models.Model):
 
     def get_absolute_url(self):
         return reverse('transactions:transaction_detail', kwargs={'pk': self.pk})
+
+
+class BudgetLimit(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="User"
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        verbose_name="Category"
+    )
+    limit_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Limit Amount"
+    )
+    period = models.CharField(
+        max_length=10,
+        choices=[
+            ('DAY', 'Daily'),
+            ('WEEK', 'Weekly'),
+            ('MONTH', 'Monthly')
+        ],
+        verbose_name="Period"
+    )
+
+    objects = BudgetLimitManager()
+
+    class Meta:
+        unique_together = ('user', 'category', 'period')
+        verbose_name = "Budget Limit"
+        verbose_name_plural = "Budget Limits"
+
+    def __str__(self):
+        return f"{self.user.username}: {self.category.name} - {self.limit_amount} ({self.get_period_display()})"
