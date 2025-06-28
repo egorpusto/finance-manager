@@ -1,0 +1,38 @@
+{% extends "registration/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if object %}Edit{% else %}Add{% endif %} Budget Limit</h2>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            {{ form.category.label_tag }}
+            {{ form.category }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.limit_amount.label_tag }}
+            {{ form.limit_amount }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.period.label_tag }}
+            {{ form.period }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}
