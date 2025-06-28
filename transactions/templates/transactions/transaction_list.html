@@ -1,13 +1,17 @@
 {% extends "registration/base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between mb-4">
-        <h2>Your Transactions</h2>
+<div class="d-flex justify-content-between mb-4">
+    <h2>Your Transactions</h2>
+    <div>
+        <a href="{% url 'transactions:export' %}" class="btn btn-info me-2">
+            <i class="bi bi-download"></i> Export CSV
+        </a>
         <a href="{% url 'transactions:create' %}" class="btn btn-success">
             <i class="bi bi-plus"></i> Add Transaction
         </a>
     </div>
+</div>
 
     <div class="table-responsive">
         <table class="table table-striped">

@@ -15,4 +15,6 @@ urlpatterns = [
     path('statistics/', views.statistics_view, name='statistics'),
     path('transactions/<int:pk>/', views.TransactionDetailView.as_view(), name='transaction_detail'),
     path('categories/<int:pk>/', views.CategoryDetailView.as_view(), name='category_detail'),
+    path('export-transactions/', views.export_transactions, name='export'),
+    
 ]

@@ -18,6 +18,32 @@ from django.core.cache import cache
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView
+from django.db.models import Sum
+
+
+def export_transactions(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="transactions.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Date', 'Amount', 'Type', 'Category', 'Description'])
+
+    transactions = Transaction.objects.filter(
+        user=request.user).select_related('category')
+
+    for t in transactions:
+        writer.writerow([
+            t.date.strftime('%Y-%m-%d'),
+            t.amount,
+            t.get_type_display(),
+            t.category.name if t.category else '',
+            t.description
+        ])
+
+    return response
 
 
 class TransactionDetailView(LoginRequiredMixin, DetailView):
@@ -36,19 +62,6 @@ class CategoryDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
-
-def export_transactions(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="transactions.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Date', 'Amount', 'Category', 'Description'])
-
-    transactions = Transaction.objects.filter(user=request.user)
-    for t in transactions:
-        writer.writerow([t.date, t.amount, t.category.name, t.description])
-
-    return response
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
