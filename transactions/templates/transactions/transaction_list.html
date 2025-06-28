@@ -10,34 +10,39 @@
         <a href="{% url 'transactions:create' %}" class="btn btn-success">
             <i class="bi bi-plus"></i> Add Transaction
         </a>
+        <a href="{% url 'transactions:budget-alerts' %}" class="btn btn-warning ms-2">
+            <i class="bi bi-exclamation-triangle"></i> Budget Alerts
+        </a>
     </div>
 </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.date|date:"Y-m-d" }}</td>
-                    <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.category.name }}</td>
-                    <td>{{ transaction.description|default:"-" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center">No transactions yet</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.date|date:"Y-m-d" }}</td>
+                <td>{{ transaction.amount }}</td>
+                <td>
+                    <span class="badge bg-{% if transaction.type == 'income' %}success{% else %}danger{% endif %}">
+                        {{ transaction.get_type_display }}
+                    </span>
+                </td>
+                <td>{{ transaction.category.name }}</td>
+                <td>{{ transaction.description|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+
 {% endblock %}
