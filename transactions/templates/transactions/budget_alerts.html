@@ -1,0 +1,29 @@
+{% extends "registration/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-warning">
+            <h3>Budget Alerts</h3>
+        </div>
+        <div class="card-body">
+            {% if alerts %}
+            <div class="list-group">
+                {% for alert in alerts %}
+                <div class="list-group-item list-group-item-danger">
+                    <strong>{{ alert.category }}</strong>:
+                    Spent {{ alert.spent|floatformat:2 }} of
+                    {{ alert.limit|floatformat:2 }}
+                    ({{ alert.period }} limit)
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-success">
+                No budget limits exceeded!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

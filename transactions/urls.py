@@ -16,5 +16,10 @@ urlpatterns = [
     path('transactions/<int:pk>/', views.TransactionDetailView.as_view(), name='transaction_detail'),
     path('categories/<int:pk>/', views.CategoryDetailView.as_view(), name='category_detail'),
     path('export-transactions/', views.export_transactions, name='export'),
+    path('budget-alerts/', views.budget_alerts, name='budget-alerts'),
+    path('budgets/', views.BudgetLimitListView.as_view(), name='budget-list'),
+    path('budgets/add/', views.BudgetLimitCreateView.as_view(), name='budget-add'),
+    path('budgets/<int:pk>/edit/', views.BudgetLimitUpdateView.as_view(), name='budget-edit'),
+    path('budgets/<int:pk>/delete/', views.BudgetLimitDeleteView.as_view(), name='budget-delete'),
     
 ]

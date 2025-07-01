@@ -1,7 +1,16 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Category
+from .models import Category, Transaction
+
+
+@receiver(post_save, sender=Transaction)
+def check_transaction_against_limits(sender, instance, **kwargs):
+    if instance.type == Transaction.EXPENSE:
+        from .utils import check_budget_limits
+        alerts = check_budget_limits(instance.user)
+        if alerts:
+            print(f"Budget limit exceeded: {alerts}")
 
 
 @receiver(post_save, sender=User)
