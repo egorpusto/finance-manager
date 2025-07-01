@@ -14,7 +14,6 @@ class RegisterForm(UserCreationForm):
 
 class TransactionForm(forms.ModelForm):
     new_category = forms.CharField(
-        required=False,
         label='Or create new category',
         widget=forms.TextInput(
             attrs={'placeholder': 'Enter new category name'})

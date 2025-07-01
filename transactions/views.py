@@ -160,12 +160,15 @@ class CategoryDetailView(LoginRequiredMixin, DetailView):
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
+    serializer_class = TransactionSerializer
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = TransactionSerializer
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 @login_required

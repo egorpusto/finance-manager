@@ -1,6 +1,10 @@
 from django.urls import path, include
 from . import views
 from django.contrib.auth.views import LoginView, LogoutView
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'transactions', views.TransactionViewSet, basename='transaction')
 
 
 app_name = 'transactions'
@@ -21,5 +25,5 @@ urlpatterns = [
     path('budgets/add/', views.BudgetLimitCreateView.as_view(), name='budget-add'),
     path('budgets/<int:pk>/edit/', views.BudgetLimitUpdateView.as_view(), name='budget-edit'),
     path('budgets/<int:pk>/delete/', views.BudgetLimitDeleteView.as_view(), name='budget-delete'),
-    
+    path('api/', include(router.urls)),
 ]
