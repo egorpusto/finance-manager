@@ -1,0 +1,48 @@
+@media (max-width: 992px) {
+    .navbar-nav {
+        padding-top: 10px;
+    }
+
+    .nav-item {
+        margin-bottom: 5px;
+    }
+}
+
+.badge-income {
+    background-color: #28a745;
+}
+
+.badge-expense {
+    background-color: #dc3545;
+}
+
+.alert-dismissible {
+    padding-right: 3rem;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: white;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.nav-link i {
+    margin-right: 6px;
+}
+
+.navbar-nav {
+    height: 100%;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0 0.25rem;
+}
+
+.nav-link {
+    padding: 0.5rem 1rem !important;
+}
+
