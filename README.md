@@ -30,7 +30,7 @@ Django-powered personal finance tracker with income/expense management, visual s
 
 | Transactions | Analytic | Budget | Add Transaction |
 |-----------|--------------|-----------|-----------|
-| ![Transactions](screenshots/transactions.png) | ![Analytics](screenshots/analytics.png) | ![Budget](screenshots/budget.png) | ![Add Transaction](screenshots/add_transaction.png) |
+| ![Transactions](screenshots/transactions.png) | ![Statistics](screenshots/statistics.png) | ![Budget](screenshots/budget.png) | ![Add Transaction](screenshots/add_transaction.png) |
 
 ## 🛠 Tech Stack
 
