@@ -26,14 +26,9 @@
             </div>
             <div class="progress mt-2" style="height: 4px;">
                 <div class="progress-bar 
-                        {% if alert.spent > alert.limit %}bg-danger progress-bar-striped progress-bar-animated
-                        {% else %}bg-success{% endif %}" style="width: 
-                        {% if alert.limit > 0 %}
-                            {% widthratio alert.spent alert.limit 100 %}%
-                        {% else %}
-                            100%
-                        {% endif %};
-                        max-width: 100%">
+                    {% if alert.spent > alert.limit %}bg-danger progress-bar-striped progress-bar-animated
+                    {% else %}bg-success{% endif %}" style="width: {% if alert.limit > 0 %}{% widthratio alert.spent alert.limit 100 %}%{% else %}100%{% endif %};
+                    max-width: 100%">
                 </div>
             </div>
         </div>
@@ -46,12 +41,58 @@
 <div class="d-flex justify-content-between mb-4">
     <h2>Your Transactions</h2>
     <div>
+        <button class="btn btn-outline-primary me-2" type="button" data-bs-toggle="collapse"
+            data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+            <i class="bi bi-funnel"></i> Filters
+        </button>
         <a href="{% url 'transactions:export' %}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-download"></i> Export
         </a>
         <a href="{% url 'transactions:create' %}" class="btn btn-primary">
             <i class="bi bi-plus"></i> Add Transaction
         </a>
+    </div>
+</div>
+
+<div class="collapse mb-4" id="filterCollapse">
+    <div class="card">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Type</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="income" {% if request.GET.type == 'income' %}selected{% endif %}>Income</option>
+                        <option value="expense" {% if request.GET.type == 'expense' %}selected{% endif %}>Expense</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">From Date</label>
+                    <input type="date" name="date_from" id="date_from" class="form-control"
+                        value="{{ request.GET.date_from }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">To Date</label>
+                    <input type="date" name="date_to" id="date_to" class="form-control"
+                        value="{{ request.GET.date_to }}">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+                    <a href="{% url 'transactions:list' %}" class="btn btn-outline-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -88,10 +129,48 @@
                     </div>
                 </td>
             </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No transactions found</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center mt-4">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&laquo;
+                First</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+        </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last
+                &raquo;</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
 
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">

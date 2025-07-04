@@ -48,20 +48,42 @@ class TransactionDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, "Transaction deleted successfully")
         return super().get_success_url()
 
+
 class TransactionListView(LoginRequiredMixin, ListView):
     model = Transaction
     template_name = 'transactions/transaction_list.html'
     context_object_name = 'transactions'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Transaction.objects.filter(user=self.request.user)\
+            .select_related('category')\
+            .order_by('-date')
+
+        transaction_type = self.request.GET.get('type')
+        if transaction_type in [Transaction.INCOME, Transaction.EXPENSE]:
+            queryset = queryset.filter(type=transaction_type)
+
+        category_id = self.request.GET.get('category')
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+        if date_from:
+            queryset = queryset.filter(date__gte=date_from)
+        if date_to:
+            queryset = queryset.filter(date__lte=date_to)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['alerts'] = check_budget_limits(self.request.user)
+        context['categories'] = Category.objects.filter(
+            user=self.request.user).order_by('name')
+        
         return context
-
-    def get_queryset(self):
-        return Transaction.objects.filter(user=self.request.user)\
-            .select_related('category')\
-            .order_by('-date')
 
 
 class CreateTransactionView(LoginRequiredMixin, CreateView):

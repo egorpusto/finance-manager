@@ -26,14 +26,18 @@ Django-powered personal finance tracker with income/expense management, visual s
 - Role-based access control
 - User-specific data isolation
 
+## 📸 Screenshots
+
+| Transactions | Analytic | Budget | Add Transaction |
+|-----------|--------------|-----------|-----------|
+| ![Transactions](screenshots/transactions.png) | ![Analytics](screenshots/analytics.png) | ![Budget](screenshots/budget.png) | ![Add Transaction](screenshots/add_transaction.png) |
+
 ## 🛠 Tech Stack
 
 **Backend:**
 - Python 3.10+
 - Django 5.0
 - Django REST Framework
-- PostgreSQL (production)
-- SQLite (development)
 
 **Frontend:**
 - Bootstrap 5
@@ -72,6 +76,13 @@ Visit:
 - http://localhost:8000 - App
 - http://localhost:8000/admin - Admin panel
 - http://localhost:8000/api - API
+
+## 🤝 Contributing
+1. Fork the project  
+2. Create your branch (`git checkout -b feature/amazing-feature`)  
+3. Commit changes (`git commit -m 'Add amazing feature'`)  
+4. Push to branch (`git push origin feature/amazing-feature`)  
+5. Open a Pull Request  
 
 ## 🧪 Testing
 
