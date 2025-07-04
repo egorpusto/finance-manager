@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from django.core.cache import cache
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
@@ -36,10 +36,27 @@ class BaseTransactionView(BaseView):
     success_url = reverse_lazy('transactions:list')
 
 
+class TransactionDeleteView(LoginRequiredMixin, DeleteView):
+    model = Transaction
+    template_name = 'transactions/transaction_confirm_delete.html'
+    success_url = reverse_lazy('transactions:list')
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        messages.success(self.request, "Transaction deleted successfully")
+        return super().get_success_url()
+
 class TransactionListView(LoginRequiredMixin, ListView):
     model = Transaction
     template_name = 'transactions/transaction_list.html'
     context_object_name = 'transactions'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['alerts'] = check_budget_limits(self.request.user)
+        return context
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)\
@@ -61,12 +78,14 @@ class CreateTransactionView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         new_category = form.cleaned_data.get('new_category')
+
         if new_category:
-            category = Category.objects.create(
+            category, created = Category.objects.get_or_create(
                 name=new_category,
                 user=self.request.user
             )
             form.instance.category = category
+
         return super().form_valid(form)
 
 
@@ -115,14 +134,13 @@ class BudgetLimitListView(LoginRequiredMixin, ListView):
     template_name = 'transactions/budget_limit_list.html'
     context_object_name = 'budgets'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['alerts'] = check_budget_limits(self.request.user)
+        return context
+
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
-
-
-@login_required
-def budget_alerts(request):
-    alerts = check_budget_limits(request.user)
-    return render(request, 'transactions/budget_alerts.html', {'alerts': alerts})
 
 
 def export_transactions(request):
@@ -228,8 +246,15 @@ def register(request):
         {'form': form}
     )
 
+
 @login_required
 def home(request):
-    return render(request, "transactions/home.html")
+    recent_transactions = Transaction.objects.filter(
+        user=request.user
+    ).select_related('category').order_by('-date')[:5]
 
-
+    context = {
+        'alerts': check_budget_limits(request.user),
+        'recent_transactions': recent_transactions
+    }
+    return render(request, "transactions/home.html", context)

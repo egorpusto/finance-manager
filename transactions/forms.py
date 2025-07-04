@@ -14,16 +14,20 @@ class RegisterForm(UserCreationForm):
 
 class TransactionForm(forms.ModelForm):
     new_category = forms.CharField(
+        required=False,
         label='Or create new category',
-        widget=forms.TextInput(
-            attrs={'placeholder': 'Enter new category name'})
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Enter new category name',
+            'class': 'form-control'
+        }),
+        error_messages={
+            'invalid': "Please select either an existing category or create a new one, not both"
+        }
     )
-
     type = forms.ChoiceField(
         choices=Transaction.TYPE_CHOICES,
-        widget=forms.RadioSelect,
         initial=Transaction.EXPENSE,
-        label='Transaction Type'
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
     )
 
     class Meta:
@@ -31,7 +35,7 @@ class TransactionForm(forms.ModelForm):
         fields = ['type', 'amount', 'date', 'category', 'description']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'category': forms.Select(attrs={'class': 'form-select'})
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -39,9 +43,27 @@ class TransactionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['category'].queryset = Category.objects.filter(
-                user=user
-            ).order_by('name').distinct()
+                user=user)
             self.fields['category'].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        category = cleaned_data.get('category')
+        new_category = cleaned_data.get('new_category')
+
+        if not category and not new_category:
+            raise forms.ValidationError(
+                "You must select a category or create a new one",
+                code='invalid'
+            )
+
+        if category and new_category:
+            raise forms.ValidationError(
+                "Please select either an existing category or create a new one, not both",
+                code='invalid'
+            )
+
+        return cleaned_data
 
 
 class BudgetLimitForm(forms.ModelForm):
@@ -53,21 +75,33 @@ class BudgetLimitForm(forms.ModelForm):
         label="Limit Amount",
         help_text="Enter positive value"
     )
+
     class Meta:
         model = BudgetLimit
         fields = ['category', 'limit_amount', 'period']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-select'}),
-            'period': forms.Select(attrs={'class': 'form-select'})
+            'period': forms.Select(choices=BudgetLimit.PERIOD_CHOICES)
         }
+
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        if self.user:
-            self.fields['category'].queryset = Category.objects.filter(
-                user=self.user)
 
+        if self.user:
+            categories = Category.objects.filter(user=self.user)
+            seen = set()
+            unique_categories = []
+
+            for cat in categories.order_by('name'):
+                if cat.name not in seen:
+                    seen.add(cat.name)
+                    unique_categories.append(cat.id)
+
+            self.fields['category'].queryset = Category.objects.filter(
+                id__in=unique_categories
+            ).order_by('name')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -84,8 +118,8 @@ class BudgetLimitForm(forms.ModelForm):
                         cleaned_data['period']
                     )
                     raise forms.ValidationError(
-                        f"Вы уже установили {period_display.lower()} лимит "
-                        f"для категории '{cleaned_data['category'].name}'. "
-                        f"Пожалуйста, отредактируйте существующий лимит."
+                        f"You've already set {period_display.lower()} limit "
+                        f"for category '{cleaned_data['category'].name}'. "
+                        f"Please edit the existing limit."
                     )
         return cleaned_data

@@ -18,9 +18,11 @@
                     {{ budget.limit_amount }} ({{ budget.get_period_display }})
                 </div>
                 <div>
-                    <a href="{% url 'transactions:budget-edit' budget.pk %}" class="btn btn-sm btn-warning me-2">Edit</a>
+                    <a href="{% url 'transactions:budget-edit' budget.pk %}"
+                        class="btn btn-sm btn-warning me-2">Edit</a>
                     <a href="{% url 'transactions:budget-delete' budget.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                </div>      </div>
+                </div>
+            </div>
         </div>
         {% empty %}
         <div class="alert alert-info">No budget limits set yet.</div>

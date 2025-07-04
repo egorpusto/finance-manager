@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.contrib.auth import get_user_model
 from .managers import BudgetLimitManager, TransactionManager
 from django.urls import reverse
 
@@ -82,6 +82,12 @@ class Transaction(models.Model):
 
 
 class BudgetLimit(models.Model):
+    PERIOD_CHOICES = [
+        ('DAY', 'Daily'),
+        ('WEEK', 'Weekly'),
+        ('MONTH', 'Monthly')
+    ]
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -99,11 +105,7 @@ class BudgetLimit(models.Model):
     )
     period = models.CharField(
         max_length=10,
-        choices=[
-            ('DAY', 'Daily'),
-            ('WEEK', 'Weekly'),
-            ('MONTH', 'Monthly')
-        ],
+        choices=PERIOD_CHOICES,
         verbose_name="Period"
     )
 
@@ -116,3 +118,12 @@ class BudgetLimit(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.category.name} - {self.limit_amount} ({self.get_period_display()})"
+
+
+def get_user_budget_alerts(user):
+    from .utils import check_budget_limits
+    return check_budget_limits(user)
+
+UserModel = get_user_model()
+
+UserModel.add_to_class('get_budget_alerts', get_user_budget_alerts)

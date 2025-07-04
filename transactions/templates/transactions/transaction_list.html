@@ -1,17 +1,56 @@
 {% extends "registration/base.html" %}
 
 {% block content %}
+{% with alerts=user.get_budget_alerts %}
+{% if alerts %}
+<div class="alert alert-light border mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0 text-muted">
+            <i class="bi bi-piggy-bank"></i> Budget Notifications
+        </h5>
+        <span class="badge bg-warning rounded-pill">{{ alerts|length }}</span>
+    </div>
+
+    <div class="list-group list-group-flush">
+        {% for alert in alerts %}
+        <div class="list-group-item list-group-item-light">
+            <div class="d-flex justify-content-between small">
+                <span>
+                    <strong>{{ alert.category }}</strong>:
+                    {{ alert.spent|floatformat:2 }} of {{ alert.limit|floatformat:2 }}
+                    ({{ alert.period }})
+                </span>
+                <span class="{% if alert.spent > alert.limit %}text-danger{% else %}text-success{% endif %}">
+                    {{ alert.spent|floatformat:2 }} / {{ alert.limit|floatformat:2 }}
+                </span>
+            </div>
+            <div class="progress mt-2" style="height: 4px;">
+                <div class="progress-bar 
+                        {% if alert.spent > alert.limit %}bg-danger progress-bar-striped progress-bar-animated
+                        {% else %}bg-success{% endif %}" style="width: 
+                        {% if alert.limit > 0 %}
+                            {% widthratio alert.spent alert.limit 100 %}%
+                        {% else %}
+                            100%
+                        {% endif %};
+                        max-width: 100%">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endwith %}
+
 <div class="d-flex justify-content-between mb-4">
     <h2>Your Transactions</h2>
     <div>
-        <a href="{% url 'transactions:export' %}" class="btn btn-info me-2">
-            <i class="bi bi-download"></i> Export CSV
+        <a href="{% url 'transactions:export' %}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-download"></i> Export
         </a>
-        <a href="{% url 'transactions:create' %}" class="btn btn-success">
+        <a href="{% url 'transactions:create' %}" class="btn btn-primary">
             <i class="bi bi-plus"></i> Add Transaction
-        </a>
-        <a href="{% url 'transactions:budget-alerts' %}" class="btn btn-warning ms-2">
-            <i class="bi bi-exclamation-triangle"></i> Budget Alerts
         </a>
     </div>
 </div>
@@ -25,6 +64,7 @@
                 <th>Type</th>
                 <th>Category</th>
                 <th>Description</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -37,12 +77,58 @@
                         {{ transaction.get_type_display }}
                     </span>
                 </td>
-                <td>{{ transaction.category.name }}</td>
+                <td>{{ transaction.category.name|default:"-" }}</td>
                 <td>{{ transaction.description|default:"-" }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{% url 'transactions:transaction-delete' transaction.pk %}"
+                            class="btn btn-outline-danger delete-btn" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this transaction?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        const deleteForm = document.getElementById('deleteForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const url = this.getAttribute('href');
+                deleteForm.action = url;
+                deleteModal.show();
+            });
+        });
+    });
+</script>
 {% endblock %}

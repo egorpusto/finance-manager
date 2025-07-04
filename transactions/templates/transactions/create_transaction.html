@@ -6,71 +6,99 @@
     <form method="post" novalidate>
         {% csrf_token %}
 
-        {% if form.non_field_errors %}
+        {% if form.errors %}
         <div class="alert alert-danger">
-            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+            <p>{{ field|title }}: {{ error }}</p>
+            {% endfor %}
+            {% endfor %}
         </div>
         {% endif %}
 
-        <!-- Поле type -->
+        <!-- Transaction Type -->
         <div class="mb-3">
             <label class="form-label">Transaction Type</label>
-            {% for choice in form.type %}
-            <div class="form-check">
-                {{ choice.tag }}
-                <label class="form-check-label" for="{{ choice.id_for_label }}">
-                    {{ choice.choice_label }}
-                </label>
+            <div class="d-flex gap-3">
+                {% for choice in form.type %}
+                <div class="form-check">
+                    {{ choice.tag }}
+                    <label class="form-check-label" for="{{ choice.id_for_label }}">
+                        {{ choice.choice_label }}
+                    </label>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
             {% if form.type.errors %}
-            <div class="text-danger">
+            <div class="invalid-feedback d-block">
                 {% for error in form.type.errors %}{{ error }}{% endfor %}
             </div>
             {% endif %}
         </div>
 
-        <!-- Остальные поля формы -->
+        <!-- Amount -->
         <div class="mb-3">
-            {{ form.amount.label_tag }}
-            {{ form.amount }}
+            <label for="{{ form.amount.id_for_label }}" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control {% if form.amount.errors %}is-invalid{% endif %}"
+                id="{{ form.amount.id_for_label }}" name="{{ form.amount.name }}"
+                value="{{ form.amount.value|default_if_none:'' }}" required>
             {% if form.amount.errors %}
-            <div class="text-danger">
+            <div class="invalid-feedback">
                 {% for error in form.amount.errors %}{{ error }}{% endfor %}
             </div>
             {% endif %}
         </div>
 
+        <!-- Date -->
         <div class="mb-3">
-            {{ form.date.label_tag }}
-            {{ form.date }}
+            <label for="{{ form.date.id_for_label }}" class="form-label">Date</label>
+            <input type="date" class="form-control {% if form.date.errors %}is-invalid{% endif %}"
+                id="{{ form.date.id_for_label }}" name="{{ form.date.name }}"
+                value="{{ form.date.value|default_if_none:''|date:'Y-m-d' }}" required>
             {% if form.date.errors %}
-            <div class="text-danger">
+            <div class="invalid-feedback">
                 {% for error in form.date.errors %}{{ error }}{% endfor %}
             </div>
             {% endif %}
         </div>
 
+        <!-- Category -->
         <div class="mb-3">
-            {{ form.category.label_tag }}
-            {{ form.category }}
-            <div class="mt-2">
-                {{ form.new_category }}
-                <small class="text-muted">Leave empty if selecting existing category</small>
-            </div>
+            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+            <select class="form-select {% if form.category.errors %}is-invalid{% endif %}"
+                id="{{ form.category.id_for_label }}" name="{{ form.category.name }}">
+                <option value="">---------</option>
+                {% for category in form.category.field.queryset %}
+                {% if form.category.value == category.pk %}
+                <option value="{{ category.pk }}" selected>{{ category.name }}</option>
+                {% else %}
+                <option value="{{ category.pk }}">{{ category.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
             {% if form.category.errors %}
-            <div class="text-danger">
+            <div class="invalid-feedback">
                 {% for error in form.category.errors %}{{ error }}{% endfor %}
             </div>
             {% endif %}
         </div>
 
+        <!-- New Category -->
         <div class="mb-3">
-            {{ form.description.label_tag }}
-            {{ form.description }}
+            <label for="{{ form.new_category.id_for_label }}" class="form-label">Or create new category</label>
+            <input type="text" class="form-control" id="{{ form.new_category.id_for_label }}"
+                name="{{ form.new_category.name }}" value="{{ form.new_category.value|default_if_none:'' }}">
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+            <textarea class="form-control" id="{{ form.description.id_for_label }}"
+                name="{{ form.description.name }}">{{ form.description.value|default_if_none:'' }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'transactions:list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

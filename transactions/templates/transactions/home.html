@@ -1,17 +1,105 @@
 {% extends "registration/base.html" %}
 
 {% block content %}
-<h1>Welcome, {{ user.username }}!</h1>
+<div class="row">
+    <div class="col-lg-8">
+        {% with alerts=user.get_budget_alerts %}
+        {% if alerts %}
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Budget Alerts</h3>
+                    <span class="badge bg-danger rounded-pill">{{ alerts|length }} alerts</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    {% for alert in alerts %}
+                    <div class="list-group-item list-group-item-danger">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ alert.category }}</strong>:
+                                Spent {{ alert.spent|floatformat:2 }} of
+                                {{ alert.limit|floatformat:2 }}
+                                ({{ alert.period }} limit)
+                            </div>
+                            <span class="badge bg-dark rounded-pill">
+                                {{ alert.spent|floatformat:2 }} / {{ alert.limit|floatformat:2 }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
 
-<div class="mt-4">
-    <h2>Your actions:</h2>
-    <ul class="list-group">
-        <li class="list-group-item">
-            <a href="{% url 'transactions:list' %}">View Transactions</a>
-        </li>
-        <li class="list-group-item">
-            <a href="{% url 'transactions:logout' %}">Log out</a>
-        </li>
-    </ul>
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{% url 'transactions:create' %}" class="btn btn-outline-primary w-100 py-3">
+                            <i class="bi bi-plus-circle"></i> Add Transaction
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'transactions:list' %}" class="btn btn-outline-secondary w-100 py-3">
+                            <i class="bi bi-list-ul"></i> View Transactions
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'transactions:budget-list' %}" class="btn btn-outline-info w-100 py-3">
+                            <i class="bi bi-wallet2"></i> Budget Management
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'transactions:statistics' %}" class="btn btn-outline-success w-100 py-3">
+                            <i class="bi bi-graph-up"></i> View Statistics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h3 class="mb-0"><i class="bi bi-pie-chart"></i> Monthly Summary</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-center">Here will be charts</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h3 class="mb-0"><i class="bi bi-clock-history"></i> Recent Transactions</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for transaction in recent_transactions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">{{ transaction.date|date:"M d" }}</small><br>
+                            {{ transaction.category.name|default:"No category" }}
+                        </div>
+                        <span
+                            class="badge bg-{% if transaction.type == 'income' %}success{% else %}danger{% endif %} rounded-pill">
+                            {{ transaction.amount }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'transactions:list' %}" class="btn btn-sm btn-outline-secondary mt-3 w-100">
+                    View All Transactions
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

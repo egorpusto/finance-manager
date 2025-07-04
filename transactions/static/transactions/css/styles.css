@@ -16,6 +16,15 @@
     background-color: #dc3545;
 }
 
+.budget-alert {
+    border-left: 3px solid #ffc107;
+    background-color: #f8f9fa;
+}
+
+.budget-alert .progress {
+    background-color: #e9ecef;
+}
+
 .alert-dismissible {
     padding-right: 3rem;
 }
@@ -39,10 +48,9 @@
     display: flex;
     align-items: center;
     height: 100%;
-    margin: 0 0.25rem;
 }
 
 .nav-link {
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 0.75rem !important;
 }
 

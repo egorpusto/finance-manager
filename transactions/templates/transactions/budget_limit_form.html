@@ -18,8 +18,14 @@
         {% csrf_token %}
 
         <div class="mb-3">
-            {{ form.category.label_tag }}
-            {{ form.category }}
+            <label for="id_category" class="form-label">Category</label>
+            <select name="category" id="id_category" class="form-select">
+                {% for category in form.category.field.queryset.distinct %}
+                <option value="{{ category.pk }}" {% if form.category.value|stringformat:"s" == category.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="mb-3">
@@ -35,4 +41,21 @@
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
+
+<script>
+    // Debug script to verify duplicates in DOM
+    document.addEventListener('DOMContentLoaded', function () {
+        const options = document.getElementById('id_category').options;
+        const categories = Array.from(options).map(opt => opt.text);
+        const uniqueCategories = [...new Set(categories)];
+
+        if (categories.length !== uniqueCategories.length) {
+            console.error('Duplicate categories detected in DOM!');
+            console.log('All categories:', categories);
+            console.log('Unique categories:', uniqueCategories);
+        } else {
+            console.log('No duplicate categories found in DOM');
+        }
+    });
+</script>
 {% endblock %}

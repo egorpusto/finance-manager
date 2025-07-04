@@ -12,6 +12,9 @@ def check_transaction_against_limits(sender, instance, **kwargs):
         if alerts:
             print(f"Budget limit exceeded: {alerts}")
 
+    from django.core.cache import cache
+    cache.delete(f'stats_{instance.user.id}')
+
 
 @receiver(post_save, sender=User)
 def create_default_categories(sender, instance, created, **kwargs):

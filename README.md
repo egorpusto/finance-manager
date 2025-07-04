@@ -10,18 +10,21 @@ Django-powered personal finance tracker with income/expense management, visual s
 - CSV export functionality
 - Transaction filtering by date/type
 - Bulk operations (admin panel)
+- Type badges (income/expense) in transaction list
 
 ### 📊 Analytics
 - Interactive monthly charts (Chart.js)
 - Income vs. expense comparison
 - Category spending breakdown
 - REST API endpoints
+- Budget utilization reports
 
 ### 🔒 Security
 - Password-protected accounts
 - CSRF protection
 - Session authentication
 - Role-based access control
+- User-specific data isolation
 
 ## 🛠 Tech Stack
 
@@ -53,7 +56,7 @@ pip install -r requirements.txt
 
 ### 4. Configure .env
 cp .env.example .env
-nano .env  # Edit your settings
+# Edit .env with your settings
 
 ### 5. Run migrations
 python manage.py migrate
@@ -81,15 +84,19 @@ python manage.py test
 - `finance/`
   - `transactions/` — Main app
     - `migrations/` — Database migrations
+    - `static` - Static files
     - `templates/` — HTML templates
     - `__init__.py`
     - `admin.py` - Admin config
     - `apps.py`
     - `forms.py` — Transaction forms
+    - `managers.py` - Custom model managers
+    - `mixins.py` - View mixins and base classes
     - `models.py` — Data models
     - `signals.py` - Post-save hooks
     - `tests.py` - Unit tests
     - `urls.py` — App URLs
+    - `utils.py` - Helper functions
     - `views.py` — View logic
   - `finance/` — Project config
     - `__init__.py`
@@ -97,7 +104,8 @@ python manage.py test
     - `settings.py` — Django settings
     - `urls.py` — Project URLs
     - `wsgi.py`
-  - `.env.example` - Env template
+  - `.env.example` - Environment variables template
+  - `.gitignore` - Specifies untracked files
   - `manage.py` — Management script
   - `requirements.txt` — Dependencies
 

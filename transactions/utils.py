@@ -1,32 +1,36 @@
 from django.db.models import Sum
-from datetime import timedelta
-from django.utils import timezone
+from .models import BudgetLimit, Transaction
+from datetime import datetime, timedelta
+
+
+def get_period_start(period):
+    today = datetime.now().date()
+    if period == 'DAY':
+        return today
+    elif period == 'WEEK':
+        return today - timedelta(days=today.weekday())
+    elif period == 'MONTH':
+        return today.replace(day=1)
+    return today
 
 
 def check_budget_limits(user):
-    from .models import BudgetLimit, Transaction
+    budgets = BudgetLimit.objects.filter(user=user)
     alerts = []
-    today = timezone.now().date()
 
-    for budget in BudgetLimit.objects.filter(user=user):
-        start_date = {
-            'DAY': today,
-            'WEEK': today - timedelta(days=today.weekday()),
-            'MONTH': today.replace(day=1)
-        }[budget.period]
-
-        expenses = Transaction.objects.filter(
+    for budget in budgets:
+        spent = Transaction.objects.filter(
             user=user,
             category=budget.category,
             type=Transaction.EXPENSE,
-            date__gte=start_date
+            date__gte=get_period_start(budget.period)
         ).aggregate(total=Sum('amount'))['total'] or 0
 
-        if expenses > budget.limit_amount:
+        if spent > 0:
             alerts.append({
                 'category': budget.category.name,
-                'spent': expenses,
-                'limit': budget.limit_amount,
+                'spent': float(spent),
+                'limit': float(budget.limit_amount),
                 'period': budget.get_period_display()
             })
 
