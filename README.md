@@ -52,15 +52,15 @@ git clone https://github.com/egorpusto/finance-manager.git
 cd finance-manager
 
 ### 2. Setup environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+1. python -m venv venv
+2. source venv/bin/activate  # Windows: venv\Scripts\activate
 
 ### 3. Install dependencies
 pip install -r requirements.txt
 
-### 4. Configure .env
-cp .env.example .env
-# Edit .env with your settings
+### 4. Configure database
+1. Create PostgreSQL database task_manager_db
+2. Update DATABASES in settings.py
 
 ### 5. Run migrations
 python manage.py migrate
@@ -95,7 +95,7 @@ python manage.py test
 - `finance/`
   - `transactions/` — Main app
     - `migrations/` — Database migrations
-    - `static` - Static files
+    - `static/` - Static files
     - `templates/` — HTML templates
     - `__init__.py`
     - `admin.py` - Admin config
@@ -124,9 +124,11 @@ python manage.py test
 
 ### Create .env file with:
 
-SECRET_KEY=your-secret-key-here
-DEBUG=True
-DATABASE_URL=sqlite:///db.sqlite3  # Or your PostgreSQL URL
+SECRET_KEY=your-secret-key-here  
+DEBUG=True  
+DB_NAME=task_manager_db  
+DB_USER=your_db_user  
+DB_PASSWORD=your_db_password
 
 ---
 
