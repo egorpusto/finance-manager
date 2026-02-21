@@ -1,0 +1,38 @@
+{% extends "registration/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-upload"></i> Import Transactions from CSV</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <strong>Expected CSV format:</strong><br>
+                <code>Date,Amount,Type,Category,Description</code><br>
+                <code>2024-01-15,100.00,expense,Food,Lunch</code><br>
+                <code>2024-01-16,5000.00,income,Salary,Monthly salary</code>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.csv_file.label_tag }}
+                    <input type="file" name="csv_file" accept=".csv" class="form-control
+                        {% if form.csv_file.errors %}is-invalid{% endif %}">
+                    <div class="form-text">{{ form.csv_file.help_text }}</div>
+                    {% if form.csv_file.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.csv_file.errors %}{{ error }}{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload"></i> Import
+                </button>
+                <a href="{% url 'transactions:list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

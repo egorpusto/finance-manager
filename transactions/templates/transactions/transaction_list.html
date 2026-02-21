@@ -1,7 +1,6 @@
 {% extends "registration/base.html" %}
 
 {% block content %}
-{% with alerts=user.get_budget_alerts %}
 {% if alerts %}
 <div class="alert alert-light border mb-4">
     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -25,7 +24,7 @@
                 </span>
             </div>
             <div class="progress mt-2" style="height: 4px;">
-                <div class="progress-bar 
+                <div class="progress-bar
                     {% if alert.spent > alert.limit %}bg-danger progress-bar-striped progress-bar-animated
                     {% else %}bg-success{% endif %}" style="width: {% if alert.limit > 0 %}{% widthratio alert.spent alert.limit 100 %}%{% else %}100%{% endif %};
                     max-width: 100%">
@@ -36,7 +35,6 @@
     </div>
 </div>
 {% endif %}
-{% endwith %}
 
 <div class="d-flex justify-content-between mb-4">
     <h2>Your Transactions</h2>
@@ -47,6 +45,9 @@
         </button>
         <a href="{% url 'transactions:export' %}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-download"></i> Export
+        </a>
+        <a href="{% url 'transactions:import' %}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-upload"></i> Import
         </a>
         <a href="{% url 'transactions:create' %}" class="btn btn-primary">
             <i class="bi bi-plus"></i> Add Transaction

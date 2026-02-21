@@ -1,0 +1,48 @@
+{% extends "registration/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="bi bi-receipt"></i> Transaction Details</h3>
+            <span class="badge bg-{% if object.type == 'income' %}success{% else %}danger{% endif %} fs-6">
+                {{ object.get_type_display }}
+            </span>
+        </div>
+        <div class="card-body">
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <th style="width: 30%">Date</th>
+                        <td>{{ object.date|date:"Y-m-d" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Amount</th>
+                        <td>
+                            <span class="fw-bold text-{% if object.type == 'income' %}success{% else %}danger{% endif %}">
+                                {{ object.amount }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Category</th>
+                        <td>{{ object.category.name|default:"—" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ object.description|default:"—" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex gap-2">
+            <a href="{% url 'transactions:list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <a href="{% url 'transactions:transaction-delete' object.pk %}" class="btn btn-danger ms-auto">
+                <i class="bi bi-trash"></i> Delete
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

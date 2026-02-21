@@ -10,11 +10,24 @@
             {% if alerts %}
             <div class="list-group">
                 {% for alert in alerts %}
-                <div class="list-group-item list-group-item-danger">
-                    <strong>{{ alert.category }}</strong>:
-                    Spent {{ alert.spent|floatformat:2 }} of
-                    {{ alert.limit|floatformat:2 }}
-                    ({{ alert.period }} limit)
+                <div class="list-group-item list-group-item-{% if alert.is_exceeded %}danger{% elif alert.is_warning %}warning{% else %}light{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ alert.category }}</strong>:
+                            Spent {{ alert.spent|floatformat:2 }} of
+                            {{ alert.limit|floatformat:2 }}
+                            ({{ alert.period }} limit)
+                        </div>
+                        <span class="badge bg-{% if alert.is_exceeded %}danger{% elif alert.is_warning %}warning text-dark{% else %}secondary{% endif %}">
+                            {{ alert.percentage }}%
+                        </span>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-{% if alert.is_exceeded %}danger{% elif alert.is_warning %}warning{% else %}success{% endif %}
+                            {% if alert.is_exceeded %}progress-bar-striped progress-bar-animated{% endif %}"
+                            style="width: {{ alert.percentage|floatformat:0 }}%; max-width: 100%;">
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>

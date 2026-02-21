@@ -42,20 +42,4 @@
     </form>
 </div>
 
-<script>
-    // Debug script to verify duplicates in DOM
-    document.addEventListener('DOMContentLoaded', function () {
-        const options = document.getElementById('id_category').options;
-        const categories = Array.from(options).map(opt => opt.text);
-        const uniqueCategories = [...new Set(categories)];
-
-        if (categories.length !== uniqueCategories.length) {
-            console.error('Duplicate categories detected in DOM!');
-            console.log('All categories:', categories);
-            console.log('Unique categories:', uniqueCategories);
-        } else {
-            console.log('No duplicate categories found in DOM');
-        }
-    });
-</script>
 {% endblock %}

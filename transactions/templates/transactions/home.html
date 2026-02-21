@@ -3,7 +3,6 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-8">
-        {% with alerts=user.get_budget_alerts %}
         {% if alerts %}
         <div class="card mb-4">
             <div class="card-header bg-warning text-white">
@@ -33,7 +32,6 @@
             </div>
         </div>
         {% endif %}
-        {% endwith %}
 
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
