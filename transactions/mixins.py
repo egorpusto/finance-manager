@@ -1,13 +1,15 @@
-from django.views.generic.edit import FormMixin
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.views.generic.edit import FormMixin
+
 from .models import BudgetLimit
 
 
 class BudgetLimitMixin(LoginRequiredMixin, FormMixin):
     model = BudgetLimit
-    template_name = 'transactions/budget_limit_form.html'
-    success_url = reverse_lazy('transactions:budget-list')
+    template_name = "transactions/budget_limit_form.html"
+    success_url = reverse_lazy("transactions:budget-list")
 
     def get_queryset(self):
         return BudgetLimit.objects.filter(user=self.request.user)
