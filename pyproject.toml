@@ -1,0 +1,21 @@
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+exclude = '''
+/(
+    migrations
+  | venv
+  | staticfiles
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["migrations", "venv", "staticfiles"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = ["migrations", "venv", "staticfiles", ".git"]
+per-file-ignores = ["*/settings.py:E501"]
