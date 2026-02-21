@@ -8,40 +8,53 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('transactions', '0007_alter_budgetlimit_user'),
+        ("transactions", "0007_alter_budgetlimit_user"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='budgetlimit',
-            options={'verbose_name': 'Budget Limit', 'verbose_name_plural': 'Budget Limits'},
+            name="budgetlimit",
+            options={
+                "verbose_name": "Budget Limit",
+                "verbose_name_plural": "Budget Limits",
+            },
         ),
         migrations.AlterUniqueTogether(
-            name='budgetlimit',
+            name="budgetlimit",
             unique_together=set(),
         ),
         migrations.AlterUniqueTogether(
-            name='category',
+            name="category",
             unique_together=set(),
         ),
         migrations.AlterField(
-            model_name='budgetlimit',
-            name='category',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='transactions.category', verbose_name='Category'),
+            model_name="budgetlimit",
+            name="category",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="transactions.category",
+                verbose_name="Category",
+            ),
         ),
         migrations.AlterField(
-            model_name='budgetlimit',
-            name='limit_amount',
-            field=models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Limit Amount'),
+            model_name="budgetlimit",
+            name="limit_amount",
+            field=models.DecimalField(
+                decimal_places=2, max_digits=10, verbose_name="Limit Amount"
+            ),
         ),
         migrations.AlterField(
-            model_name='budgetlimit',
-            name='period',
-            field=models.CharField(choices=[('DAY', 'Daily'), ('WEEK', 'Weekly'), ('MONTH', 'Monthly')], max_length=10, verbose_name='Period'),
+            model_name="budgetlimit",
+            name="period",
+            field=models.CharField(
+                choices=[("DAY", "Daily"), ("WEEK", "Weekly"), ("MONTH", "Monthly")],
+                max_length=10,
+                verbose_name="Period",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='budgetlimit',
-            unique_together={('user', 'category', 'period')},
+            name="budgetlimit",
+            unique_together={("user", "category", "period")},
         ),
     ]

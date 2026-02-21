@@ -7,17 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('transactions', '0004_auto_20250628_1205'),
+        ("transactions", "0004_auto_20250628_1205"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='category',
-            unique_together={('name', 'user')},
+            name="category",
+            unique_together={("name", "user")},
         ),
         migrations.AddConstraint(
-            model_name='category',
-            constraint=models.UniqueConstraint(fields=('user', 'name'), name='unique_user_category'),
+            model_name="category",
+            constraint=models.UniqueConstraint(
+                fields=("user", "name"), name="unique_user_category"
+            ),
         ),
     ]
