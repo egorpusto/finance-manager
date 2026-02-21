@@ -24,15 +24,12 @@ jobs:
 
       - name: Check black
         run: black --check .
-        working-directory: finance
 
       - name: Check isort
         run: isort --check-only .
-        working-directory: finance
 
       - name: Check flake8
         run: flake8 .
-        working-directory: finance
 
   test:
     runs-on: ubuntu-latest
@@ -88,19 +85,17 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('finance/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r finance/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run migrations
         run: python manage.py migrate
-        working-directory: finance
 
       - name: Run tests
         run: python manage.py test transactions --verbosity=2
-        working-directory: finance
