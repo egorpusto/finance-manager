@@ -53,7 +53,7 @@ A clean, production-ready personal finance manager with user authentication, tra
 - **Django** 5.2 — Web framework
 - **Django REST Framework** 3.15 — REST API
 - **PostgreSQL** 16 — Primary database
-- **Redis** 7 — Celery broker
+- **Redis** 7 — Cache + Celery broker
 - **Celery** — Background task processing
 - **django-filter** — Declarative API filtering
 - **drf-spectacular** — OpenAPI schema + Swagger UI
